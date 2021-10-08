@@ -1,0 +1,50 @@
+﻿<Window x:Class="TaskManagerCourse.Client.Views.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskManagerCourse.Client.Views"
+        mc:Ignorable="d"
+        Title="Login" 
+        Height="300" Width="300"
+        ResizeMode="NoResize"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        WindowStartupLocation="CenterScreen"
+        Name="window">    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Vertical" 
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Width="250">
+            <TextBox Text="{Binding UserLogin}" Style="{StaticResource commonTBox}"/>
+            <PasswordBox x:Name="UserPassword" Style="{StaticResource commonPBox}"/>
+            <Button Content="OK" Command="{Binding GetUserFromDBCommand}"
+                    CommandParameter="{Binding ElementName=UserPassword}"
+                    Style="{StaticResource commonBtn}"
+                    Width="100"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch">
+            <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CurrentUserCache}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Setter Property="Height" Value="0"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <TextBlock Text="Предыдущий пользователь" Style="{StaticResource commonTBlock}"/>
+            <Button Content="{Binding CurrentUserCache.Login}"
+                    Command="{Binding LoginFromCacheCommand}"
+                    CommandParameter="{Binding ElementName=window}"
+                    Style="{StaticResource commonBtn}"/>
+        </StackPanel>
+    </Grid>
+</Window>
