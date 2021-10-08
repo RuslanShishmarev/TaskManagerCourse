@@ -89,7 +89,7 @@ StyleCopReport.xml
 *.scc
 
 #Migrations
-Migrations/
+[Mm]igrations/
 
 # Chutzpah Test files
 _Chutzpah*
