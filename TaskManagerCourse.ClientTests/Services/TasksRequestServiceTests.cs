@@ -67,7 +67,7 @@ namespace TaskManagerCourse.Client.Services.Tests
         [TestMethod()]
         public void DeleteTaskByIdTest()
         {
-            var result = _service.DeleteTaskById(_token, 3);
+            var result = _service.DeleteTask(_token, 3);
             Assert.AreEqual(HttpStatusCode.OK, result);
         }
     }

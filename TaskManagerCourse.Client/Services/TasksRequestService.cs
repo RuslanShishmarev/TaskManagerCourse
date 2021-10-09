@@ -48,7 +48,7 @@ namespace TaskManagerCourse.Client.Services
             return result;
         }
 
-        public HttpStatusCode DeleteTaskById(AuthToken token, int taskId)
+        public HttpStatusCode DeleteTask(AuthToken token, int taskId)
         {
             var result = DeleteDataByUrl(_tasksControllerUrl + $"/{taskId}", token);
             return result;

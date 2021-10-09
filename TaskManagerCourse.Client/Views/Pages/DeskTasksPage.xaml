@@ -13,7 +13,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Content="New task" Command="{Binding OpenNewTaskWindowCommand}"
+        <Button Content="New task" Command="{Binding OpenNewTaskCommand}"
                 Style="{StaticResource commonBtn}"/>
         
         <Grid Grid.Row="1" x:Name="tasksGrid"/>

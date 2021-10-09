@@ -18,14 +18,14 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="{Binding Path=Model.Name}" 
+                <TextBlock Text="{Binding Path=Model.Name}"  TextWrapping="Wrap"
                            Style="{StaticResource commonTBlock}"/>
-                
-                <TextBlock Grid.Row="1" Text="{Binding Path=Model.Description}" 
+
+                <TextBlock Grid.Row="1" Text="{Binding Path=Model.Description}"  TextWrapping="Wrap"
                            Style="{StaticResource commonTBlock}"/>
                 
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <TextBlock Text="Creator: " 
+                    <TextBlock Text="Creator: "
                            Style="{StaticResource commonTBlock}"/>
                     <TextBlock Text="{Binding Path=Creator}" 
                            Style="{StaticResource commonTBlock}"/>
