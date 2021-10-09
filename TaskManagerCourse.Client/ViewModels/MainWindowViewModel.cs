@@ -150,15 +150,15 @@ namespace TaskManagerCourse.Client.ViewModels
 
         private void OpenDesksPage()
         {
-            SelectedPageName = _userDesksBtnName;
-            _viewService.ShowMessage(_userDesksBtnName);
+            var page = new UserDesksPage();
+            OpenPage(page, _userDesksBtnName, new UserDesksPageViewModel(Token));
         }
 
 
         private void OpenTasksPage()
         {
             var page = new UserTasksPage();
-            OpenPage(page, _userInfoBtnName, new UserTasksPageViewModel(Token));
+            OpenPage(page, _userTasksBtnName, new UserTasksPageViewModel(Token));
         }
 
         private void Logout()

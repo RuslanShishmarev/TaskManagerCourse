@@ -20,6 +20,7 @@ namespace TaskManagerCourse.Client.ViewModels
         private CommonViewService _viewService;
         private DesksRequestService _desksRequestService;
         private UsersRequestService _usersRequestService;
+        private DesksViewService _desksViewService;
 
         #region COMMANDS
         public DelegateCommand OpenNewDeskCommand { get; private set; }
@@ -40,6 +41,7 @@ namespace TaskManagerCourse.Client.ViewModels
             _viewService = new CommonViewService();
             _desksRequestService = new DesksRequestService();
             _usersRequestService = new UsersRequestService();
+            _desksViewService = new DesksViewService(_token, _desksRequestService);
 
             UpdatePage();
 
@@ -116,18 +118,7 @@ namespace TaskManagerCourse.Client.ViewModels
         }
 
         #endregion
-
-        private List<ModelClient<DeskModel>> GetDesks(int projectId)
-        {
-            var result = new List<ModelClient<DeskModel>>();
-            var desks = _desksRequestService.GetDesksByProject(_token, _project.Id);
-            if(desks != null)
-            {
-                result = desks.Select(d => new ModelClient<DeskModel>(d)).ToList();
-            }
-            return result;
-        }
-
+        
         private void OpenNewDesk()
         {
             SelectedDesk = new ModelClient<DeskModel>(new DeskModel());
@@ -138,7 +129,8 @@ namespace TaskManagerCourse.Client.ViewModels
         }
         private void OpenUpdateDesk(object deskId)
         {
-            SelectedDesk = GetDeskClientById(deskId);
+            SelectedDesk = _desksViewService.GetDeskClientById(deskId);
+
             if (CurrentUser.Id != SelectedDesk.Model.AdminId)
             {
                 _viewService.ShowMessage("You are not admin!");
@@ -146,9 +138,9 @@ namespace TaskManagerCourse.Client.ViewModels
             }
 
             TypeActionWithDesk = ClientAction.Update;
+            ColumnsForNewDesk = new ObservableCollection<ColumnBindingHelp>(SelectedDesk.Model.Columns.Select(c => new ColumnBindingHelp(c)));
 
-            var wnd = new CreateOrUpdateDeskWindow();
-            _viewService.OpenWindow(wnd, this);
+            _desksViewService.OpenViewDeskInfo(deskId, this);
         }
 
         private void CreateOrUpdateDesk()
@@ -159,7 +151,7 @@ namespace TaskManagerCourse.Client.ViewModels
             }
             if (TypeActionWithDesk == ClientAction.Update)
             {
-                 UpdateDesk();
+                UpdateDesk();
             }
             UpdatePage();
 
@@ -173,17 +165,15 @@ namespace TaskManagerCourse.Client.ViewModels
             var resultAction = _desksRequestService.CreateDesk(_token, SelectedDesk.Model);
             _viewService.ShowActionResult(resultAction, "New project is created");
         }
-
         private void UpdateDesk()
         {
-            var resultAction = _desksRequestService.UpdateDesk(_token, SelectedDesk.Model);
-            _viewService.ShowActionResult(resultAction, "New project is updated");
+            SelectedDesk.Model.Columns = ColumnsForNewDesk.Select(c => c.Value).ToArray();
+            _desksViewService.UpdateDesk(SelectedDesk.Model);
         }
 
         private void DeleteDesk()
         {
-            var resultAction = _desksRequestService.DeleteDesk(_token, SelectedDesk.Model.Id);
-            _viewService.ShowActionResult(resultAction, "New project is deleted");
+            _desksViewService.DeleteDesk(SelectedDesk.Model.Id);
 
             UpdatePage();
         }
@@ -191,14 +181,14 @@ namespace TaskManagerCourse.Client.ViewModels
         private void UpdatePage()
         {
             SelectedDesk = null;
-            ProjectDesks = GetDesks(_project.Id);
+            ProjectDesks = _desksViewService.GetDesks(_project.Id);
             _viewService.CurrentOpenedWindow?.Close();
         }
 
         private void SelectPhotoForDesk()
         {
-            _viewService.SetPhotoForObject(SelectedDesk.Model);
-            SelectedDesk = new ModelClient<DeskModel>(SelectedDesk.Model);
+            SelectedDesk = _desksViewService.SelectPhotoForDesk(SelectedDesk);
+            //SelectedDesk = new ModelClient<DeskModel>(SelectedDesk.Model);
         }
 
         private void AddNewColumnItem()
@@ -209,19 +199,6 @@ namespace TaskManagerCourse.Client.ViewModels
         {
             var itemToRemove = item as ColumnBindingHelp;
             ColumnsForNewDesk.Remove(itemToRemove);
-        }
-        private ModelClient<DeskModel> GetDeskClientById(object deskId)
-        {
-            try
-            {
-                int id = (int)deskId;
-                DeskModel desk = _desksRequestService.GetDeskById(_token, id);
-                return new ModelClient<DeskModel>(desk);
-            }
-            catch (FormatException)
-            {
-                return new ModelClient<DeskModel>(null);
-            }
-        }
+        }        
     }
 }
