@@ -47,7 +47,7 @@
                                             RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path=Model.Id}"
                                             Style="{StaticResource commonBtn}"/>
-                                <Button Grid.Row="2" Content="Open" Command="{Binding Path=DataContext.ShowDeskTasksCommand,
+                                <Button Grid.Row="2" Content="Open" Command="{Binding Path=DataContext.OpenDeskTasksPageCommand,
                                             RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                             CommandParameter="{Binding Path=Model.Id}"
                                             Style="{StaticResource commonBtn}"/>

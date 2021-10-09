@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManagerCourse.Client.Models;
 using TaskManagerCourse.Client.Views.AddWindows;
 using TaskManagerCourse.Common.Models;

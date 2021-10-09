@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prism.Commands;
-using Prism.Mvvm;
 using TaskManagerCourse.Client.Models;
 using TaskManagerCourse.Client.Services;
 using TaskManagerCourse.Client.Views.AddWindows;
@@ -259,7 +257,7 @@ namespace TaskManagerCourse.Client.ViewModels
             if(SelectedProject?.Model != null)
             {
                 var page = new ProjectDesksPage();
-                _mainWindowVM.OpenPage(page, $"Desks of {SelectedProject.Model.Name}", new ProjectDesksPageViewModel(_token, SelectedProject.Model));
+                _mainWindowVM.OpenPage(page, $"Desks of {SelectedProject.Model.Name}", new ProjectDesksPageViewModel(_token, SelectedProject.Model, _mainWindowVM));
             }
         }
 

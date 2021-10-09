@@ -21,6 +21,7 @@ namespace TaskManagerCourse.Client.ViewModels
         private DesksRequestService _desksRequestService;
         private UsersRequestService _usersRequestService;
         private DesksViewService _desksViewService;
+        private MainWindowViewModel _mainWindowVM;
 
         #region COMMANDS
         public DelegateCommand OpenNewDeskCommand { get; private set; }
@@ -31,12 +32,15 @@ namespace TaskManagerCourse.Client.ViewModels
         public DelegateCommand AddNewColumnItemCommand { get; private set; }
         public DelegateCommand<object> RemoveColumnItemCommand { get; private set; }
 
+        public DelegateCommand<object> OpenDeskTasksPageCommand { get; private set; }
+
         #endregion
 
-        public ProjectDesksPageViewModel(AuthToken token, ProjectModel project)
+        public ProjectDesksPageViewModel(AuthToken token, ProjectModel project, MainWindowViewModel mainWindowVM)
         {
             _token = token;
             _project = project;
+            _mainWindowVM = mainWindowVM;
 
             _viewService = new CommonViewService();
             _desksRequestService = new DesksRequestService();
@@ -53,6 +57,8 @@ namespace TaskManagerCourse.Client.ViewModels
 
             AddNewColumnItemCommand = new DelegateCommand(AddNewColumnItem);
             RemoveColumnItemCommand = new DelegateCommand<object>(RemoveColumnItem);
+
+            OpenDeskTasksPageCommand = new DelegateCommand<object>(OpenDeskTasksPage);
         }
 
         #region PROPERTIES
@@ -188,7 +194,6 @@ namespace TaskManagerCourse.Client.ViewModels
         private void SelectPhotoForDesk()
         {
             SelectedDesk = _desksViewService.SelectPhotoForDesk(SelectedDesk);
-            //SelectedDesk = new ModelClient<DeskModel>(SelectedDesk.Model);
         }
 
         private void AddNewColumnItem()
@@ -200,5 +205,13 @@ namespace TaskManagerCourse.Client.ViewModels
             var itemToRemove = item as ColumnBindingHelp;
             ColumnsForNewDesk.Remove(itemToRemove);
         }        
+
+        private void OpenDeskTasksPage(object deskId)
+        {
+            SelectedDesk = _desksViewService.GetDeskClientById(deskId);
+            var page = new DeskTasksPage();
+            var context = new DeskTasksPageViewModel(_token, SelectedDesk.Model, page);
+            _mainWindowVM.OpenPage(page, $"Tasks of {SelectedDesk.Model.Name}", context);
+        }
     }
 }
