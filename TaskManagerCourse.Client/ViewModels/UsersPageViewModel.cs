@@ -40,6 +40,7 @@ namespace TaskManagerCourse.Client.ViewModels
             OpenSelectUsersFromExcelCommand = new DelegateCommand(OpenSelectUsersFromExcel);
             GetUsersFromExcelCommand = new DelegateCommand(GetUsersFromExcel);
             AddUsersFromExcelCommand = new DelegateCommand(AddUsersFromExcel);
+            AllUsers = _usersRequestService.GetAllUsers(_token);
         }
 
         #region PROPERTIES
@@ -106,12 +107,13 @@ namespace TaskManagerCourse.Client.ViewModels
 
         #region METHODS
 
-        private void OpenUpdateUser(object userIdOnj)
+        private void OpenUpdateUser(object userObj)
         {
-            if(userIdOnj != null)
+            if(userObj != null)
             {
                 TypeActionWithUser = ClientAction.Update;
-                SelectedUser = _usersRequestService.GetUserById(_token, (int)userIdOnj);
+                int userId = ((UserModel)userObj).Id;
+                SelectedUser = _usersRequestService.GetUserById(_token, userId);
 
                 var wnd = new CreateOrUpdateUserWindow();
                 _viewService.OpenWindow(wnd, this);
@@ -126,8 +128,9 @@ namespace TaskManagerCourse.Client.ViewModels
         {
             if(userIdObj != null)
             {
-                int userId = (int)userIdObj;
+                int userId = ((UserModel)userIdObj).Id;
                 _usersRequestService.DeleteUser(_token, userId);
+                UpdatePage();
             }
         }
         private void CreateOrUpdateUser()
