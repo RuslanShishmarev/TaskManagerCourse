@@ -25,6 +25,7 @@ namespace TaskManagerCourse.Api.Models
             IsPrivate = deskModel.IsPrivate;
             AdminId = deskModel.AdminId;
             ProjectId = deskModel.ProjectId;
+            Photo = deskModel.Photo;
 
             if (deskModel.Columns.Any())
                 Columns = JsonConvert.SerializeObject(deskModel.Columns);

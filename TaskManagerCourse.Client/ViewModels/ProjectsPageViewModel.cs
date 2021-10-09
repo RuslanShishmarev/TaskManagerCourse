@@ -8,6 +8,7 @@ using Prism.Mvvm;
 using TaskManagerCourse.Client.Models;
 using TaskManagerCourse.Client.Services;
 using TaskManagerCourse.Client.Views.AddWindows;
+using TaskManagerCourse.Client.Views.Pages;
 using TaskManagerCourse.Common.Models;
 
 namespace TaskManagerCourse.Client.ViewModels
@@ -18,6 +19,7 @@ namespace TaskManagerCourse.Client.ViewModels
         private UsersRequestService _usersRequestService;
         private ProjectsRequestService _projectsRequestService;
         private CommonViewService _viewService;
+        private MainWindowViewModel _mainWindowVM;
 
         #region COMMANDS
 
@@ -27,18 +29,22 @@ namespace TaskManagerCourse.Client.ViewModels
         public DelegateCommand CreateOrUpdateProjectCommand { get; private set; }
         public DelegateCommand DeleteProjectCommand { get; private set; }
         public DelegateCommand SelectPhotoForProjectCommand { get; private set; }
+        public DelegateCommand OpenNewUsersToProjectCommand { get; private set; }
+        public DelegateCommand AddUsersToProjectCommand { get; private set; }
+
+        public DelegateCommand OpenProjectDesksPageCommand { get; private set; }
 
         #endregion
 
-        public ProjectsPageViewModel(AuthToken token)
+        public ProjectsPageViewModel(AuthToken token, MainWindowViewModel mainWindowVM)
         {
             _viewService = new CommonViewService();
             _usersRequestService = new UsersRequestService();
             _projectsRequestService = new ProjectsRequestService();
-
+            _mainWindowVM = mainWindowVM;
             _token = token;
 
-            UserProjects = GetProjectsToClient();
+            UpdatePage();
 
             OpenNewProjectCommand = new DelegateCommand(OpenNewProject);
             OpenUpdateProjectCommand = new DelegateCommand<object>(OpenUpdateProject);
@@ -47,9 +53,18 @@ namespace TaskManagerCourse.Client.ViewModels
             DeleteProjectCommand = new DelegateCommand(DeleteProject);
 
             SelectPhotoForProjectCommand = new DelegateCommand(SelectPhotoForProject);
+            OpenNewUsersToProjectCommand = new DelegateCommand(OpenNewUsersToProject);
+            AddUsersToProjectCommand = new DelegateCommand(AddUsersToProject);
+
+            OpenProjectDesksPageCommand = new DelegateCommand(OpenProjectDesksPage);
         }
 
         #region PROPERTIES
+
+        public UserModel CurrentUser
+        {
+            get => _usersRequestService.GetCurrentUser(_token);
+        }
 
         private ClientAction _typeActionWithProject;
         public ClientAction TypeActionWithProject
@@ -83,11 +98,10 @@ namespace TaskManagerCourse.Client.ViewModels
                 _selectedProject = value;
                 RaisePropertyChanged(nameof(SelectedProject));
 
-                if (SelectedProject.Model.AllUsersIds != null && SelectedProject.Model.AllUsersIds.Count > 0)
+                if (SelectedProject?.Model.AllUsersIds != null && SelectedProject?.Model.AllUsersIds.Count > 0)
                     ProjectUsers = SelectedProject.Model.AllUsersIds?.Select(userId => _usersRequestService.GetUserById(_token, userId)).ToList();
                 else
                     ProjectUsers = new List<UserModel>();
-
             }
         }
 
@@ -100,6 +114,30 @@ namespace TaskManagerCourse.Client.ViewModels
             { 
                 _projectUsers = value;
                 RaisePropertyChanged(nameof(ProjectUsers));
+            }
+        }
+
+        public List<UserModel> NewUsersForSelectedProject
+        {
+            get 
+            {
+                var allUsers = _usersRequestService.GetAllUsers(_token);
+
+                var result = allUsers.Where(user => ProjectUsers.Any(u => u.Id == user.Id) == false).ToList();
+
+                return result;
+            }
+        }
+
+        private List<UserModel> _selectedUsersForProject = new List<UserModel>();
+
+        public List<UserModel> SelectedUsersForProject
+        {
+            get => _selectedUsersForProject;
+            set 
+            { 
+                _selectedUsersForProject = value;
+                RaisePropertyChanged(nameof(SelectedUsersForProject));
             }
         }
 
@@ -153,8 +191,8 @@ namespace TaskManagerCourse.Client.ViewModels
             {
                 UpdateProject();
             }
-            UserProjects = GetProjectsToClient();
-            _viewService.CurrentOpenedWindow?.Close();
+            UpdatePage();
+            
         }
 
         private void CreateProject()
@@ -174,11 +212,12 @@ namespace TaskManagerCourse.Client.ViewModels
             var resultAction = _projectsRequestService.DeleteProject(_token, SelectedProject.Model.Id);
             _viewService.ShowActionResult(resultAction, "New project is deleted");
 
-            UserProjects = GetProjectsToClient();
+            UpdatePage();
         }
 
         private List<ModelClient<ProjectModel>> GetProjectsToClient()
         {
+            _viewService.CurrentOpenedWindow?.Close();
             return _projectsRequestService.GetAllProjects(_token).Select(project => new ModelClient<ProjectModel>(project)).ToList();
         }
 
@@ -187,6 +226,43 @@ namespace TaskManagerCourse.Client.ViewModels
             _viewService.SetPhotoForObject(SelectedProject.Model);
             SelectedProject = new ModelClient<ProjectModel>(SelectedProject.Model);
         }
+
+        private void OpenNewUsersToProject()
+        {
+            var wnd = new AddUsersToProjectWindow();
+            _viewService.OpenWindow(wnd, this);
+        }
+
+        private void AddUsersToProject()
+        {
+            if (SelectedUsersForProject == null || SelectedUsersForProject?.Count == 0)
+            {
+                _viewService.ShowMessage("Select users");
+                return;
+            }
+
+            var resultAction = _projectsRequestService.AddUsersToProject(_token, SelectedProject.Model.Id, SelectedUsersForProject.Select(user => user.Id).ToList());
+            _viewService.ShowActionResult(resultAction, "New users are added to project");
+
+            UpdatePage();
+        }
+
+        private void UpdatePage()
+        {
+            UserProjects = GetProjectsToClient();
+            SelectedProject = null;
+            SelectedUsersForProject = new List<UserModel>();
+        }
+
+        private void OpenProjectDesksPage()
+        {
+            if(SelectedProject?.Model != null)
+            {
+                var page = new ProjectDesksPage();
+                _mainWindowVM.OpenPage(page, $"Desks of {SelectedProject.Model.Name}", new ProjectDesksPageViewModel(_token, SelectedProject.Model));
+            }
+        }
+
         #endregion
     }
 }

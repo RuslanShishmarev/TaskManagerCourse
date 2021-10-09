@@ -71,7 +71,7 @@ namespace TaskManagerCourse.Client.Services.Tests
         [TestMethod()]
         public void DeleteDeskByIdTest()
         {
-            var result = _service.DeleteDeskById(_token, 5);
+            var result = _service.DeleteDesk(_token, 5);
             Assert.AreEqual(HttpStatusCode.OK, result);
         }
     }

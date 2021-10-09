@@ -145,7 +145,7 @@ namespace TaskManagerCourse.Client.ViewModels
         private void OpenProjectsPage()
         {
             var page = new ProjectsPage();
-            OpenPage(page, _userProjectsBtnName, new ProjectsPageViewModel(Token));
+            OpenPage(page, _userProjectsBtnName, new ProjectsPageViewModel(Token, this));
         }
 
         private void OpenDesksPage()
@@ -180,7 +180,7 @@ namespace TaskManagerCourse.Client.ViewModels
 
         #endregion
 
-        private void OpenPage(Page page, string pageName, BindableBase viewModel)
+        public void OpenPage(Page page, string pageName, BindableBase viewModel)
         {
             SelectedPageName = pageName;
             SelectedPage = page;
