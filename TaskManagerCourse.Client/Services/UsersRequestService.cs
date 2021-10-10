@@ -89,7 +89,7 @@ namespace TaskManagerCourse.Client.Services
         {
             var result = GetDataByUrl(HttpMethod.Get, HOST + "account/workTime", token);
             int timeMinutes = 0;
-            if (string.IsNullOrEmpty(result))
+            if (string.IsNullOrEmpty(result) == false)
             {
                 bool parseResult = int.TryParse(result, out timeMinutes);                
             }
