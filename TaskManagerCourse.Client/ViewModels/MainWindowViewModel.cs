@@ -16,6 +16,7 @@ namespace TaskManagerCourse.Client.ViewModels
     public class MainWindowViewModel : BindableBase
     {
         private CommonViewService _viewService;
+        private int _workTimeMinutes;
 
         #region COMMANDS
 
@@ -29,9 +30,10 @@ namespace TaskManagerCourse.Client.ViewModels
 
         #endregion
 
-        public MainWindowViewModel(AuthToken token, UserModel currentUser, Window currentWindow = null)
+        public MainWindowViewModel(AuthToken token, UserModel currentUser, Window currentWindow, int workTimeMinutes)
         {
             _viewService = new CommonViewService();
+            _workTimeMinutes = workTimeMinutes;
 
             Token = token;
             CurrentUser = currentUser;
@@ -58,7 +60,7 @@ namespace TaskManagerCourse.Client.ViewModels
             LogoutCommand = new DelegateCommand(Logout);
             NavButtons.Add(_logoutBtnName, LogoutCommand);
 
-            StartWork();
+            StartWork(_workTimeMinutes);
 
             OpenMyInfoPage();
         }
@@ -199,11 +201,11 @@ namespace TaskManagerCourse.Client.ViewModels
             SelectedPage.DataContext = viewModel;
         }
 
-        private async void StartWork()
+        private async void StartWork(int minutes)
         {
             await Task.Run(() =>
             {
-                Thread.Sleep(600000);
+                Thread.Sleep(minutes * 1000);
             });
             StopWork();
         }

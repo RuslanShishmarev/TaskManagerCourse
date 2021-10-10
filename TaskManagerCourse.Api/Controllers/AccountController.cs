@@ -20,6 +20,7 @@ namespace TaskManagerCourse.Api.Controllers
     {
         private readonly ApplicationContext _db;
         private readonly UsersService _userService;
+        private readonly int _workTimeMinutes = 10;
         public AccountController(ApplicationContext db)
         {
             _db = db;
@@ -36,6 +37,14 @@ namespace TaskManagerCourse.Api.Controllers
                 return Ok(user.ToDto());
             return NotFound();
         }
+
+        [Authorize]
+        [HttpGet("workTime")]
+        public int GetWorkTimeInfo()
+        {
+            return _workTimeMinutes;
+        }
+
         [HttpPost("token")]
         public IActionResult GetToken()
         {
@@ -50,7 +59,7 @@ namespace TaskManagerCourse.Api.Controllers
                     audience: AuthOptions.AUDIENCE,
                     notBefore: now,
                     claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(10)),
+                    expires: now.Add(TimeSpan.FromMinutes(_workTimeMinutes)),
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
