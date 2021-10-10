@@ -1,6 +1,8 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TaskManagerCourse.Client.Models;
@@ -55,6 +57,8 @@ namespace TaskManagerCourse.Client.ViewModels
 
             LogoutCommand = new DelegateCommand(Logout);
             NavButtons.Add(_logoutBtnName, LogoutCommand);
+
+            StartWork();
 
             OpenMyInfoPage();
         }
@@ -172,6 +176,13 @@ namespace TaskManagerCourse.Client.ViewModels
             }
         }
 
+        private void StopWork()
+        {
+            Login login = new Login();
+            login.Show();
+            _currentWindow.Close();            
+        }
+
         private void OpenUsersManagement()
         {
             SelectedPageName = _manageUsersBtnName;
@@ -186,6 +197,15 @@ namespace TaskManagerCourse.Client.ViewModels
             SelectedPageName = pageName;
             SelectedPage = page;
             SelectedPage.DataContext = viewModel;
+        }
+
+        private async void StartWork()
+        {
+            await Task.Run(() =>
+            {
+                Thread.Sleep(600000);
+            });
+            StopWork();
         }
     }
 }

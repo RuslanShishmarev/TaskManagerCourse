@@ -71,5 +71,18 @@ namespace TaskManagerCourse.Client.Services
             return result;
         }
 
+        public int? GetProjectUserAdmin(AuthToken token, int userId)
+        {
+            var result = GetDataByUrl(HttpMethod.Get, _usersControllerUrl + $"/{userId}/admin", token);
+
+            int adminId;
+
+            bool parseResult = int.TryParse(result, out adminId);
+
+            if (parseResult)
+                return adminId;
+            else
+                return null;
+        }
     }
 }

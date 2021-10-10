@@ -153,11 +153,18 @@ namespace TaskManagerCourse.Client.ViewModels
         private void OpenUpdateProject(object projectId)
         {
             SelectedProject = GetProjectClientById(projectId);
+            var adminId = _usersRequestService.GetProjectUserAdmin(_token, CurrentUser.Id);
+            if(adminId == SelectedProject.Model.AdminId)
+            {
+                TypeActionWithProject = ClientAction.Update;
 
-            TypeActionWithProject = ClientAction.Update;
-
-            var wnd = new CreateOrUpdateProjectWindow();
-            _viewService.OpenWindow(wnd, this);
+                var wnd = new CreateOrUpdateProjectWindow();
+                _viewService.OpenWindow(wnd, this);
+            }
+            else
+            {
+                _viewService.ShowMessage("You are not admin!");
+            }
         }
 
         private void ShowProjectInfo(object projectId)
@@ -216,7 +223,7 @@ namespace TaskManagerCourse.Client.ViewModels
         private List<ModelClient<ProjectModel>> GetProjectsToClient()
         {
             _viewService.CurrentOpenedWindow?.Close();
-            return _projectsRequestService.GetAllProjects(_token).Select(project => new ModelClient<ProjectModel>(project)).ToList();
+            return _projectsRequestService.GetAllProjects(_token)?.Select(project => new ModelClient<ProjectModel>(project)).ToList();
         }
 
         private void SelectPhotoForProject()

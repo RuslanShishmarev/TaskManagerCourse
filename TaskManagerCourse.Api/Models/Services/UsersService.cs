@@ -117,8 +117,7 @@ namespace TaskManagerCourse.Api.Models.Services
         }
 
         public bool CreateMultipleUsers(List<UserModel> userModels)
-        {
-            
+        {            
             return DoAction(delegate()
                 {
                     var newUsers = userModels.Select(u => new User(u));
@@ -131,6 +130,12 @@ namespace TaskManagerCourse.Api.Models.Services
         {
             User user = _db.Users.FirstOrDefault(u => u.Id == id);
             return user?.ToDto();
+        }
+
+        public ProjectAdmin GetProjectAdmin(int userId)
+        {
+            ProjectAdmin admin = _db.ProjectAdmins.FirstOrDefault(a => a.UserId == userId);
+            return admin;
         }
 
         public IEnumerable<UserModel> GetAllByIds(List<int> usersIds)

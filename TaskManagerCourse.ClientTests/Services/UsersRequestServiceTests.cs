@@ -1,14 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using TaskManagerCourse.Client.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using TaskManagerCourse.Common.Models;
+using TaskManagerCourse.Client.Models;
 
 namespace TaskManagerCourse.Client.Services.Tests
 {
     [TestClass()]
     public class UsersRequestServiceTests
     {
+
+        private AuthToken _token;
+        private UsersRequestService _service;
+
+        public UsersRequestServiceTests()
+        {
+            _token = new UsersRequestService().GetToken("admin", "qwerty123");
+            _service = new UsersRequestService();
+        }
+
         [TestMethod()]
         public void GetTokenTest()
         {
@@ -88,6 +100,13 @@ namespace TaskManagerCourse.Client.Services.Tests
             var result = service.UpdateUser(token, userTest);
 
             Assert.AreEqual(HttpStatusCode.OK, result);
+        }
+
+        [TestMethod()]
+        public void GetProjectUserAdminTest()
+        {
+            var id = _service.GetProjectUserAdmin(_token, 4);
+            Assert.AreEqual(null, id);
         }
     }
 }

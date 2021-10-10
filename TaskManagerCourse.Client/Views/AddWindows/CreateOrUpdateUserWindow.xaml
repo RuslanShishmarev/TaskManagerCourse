@@ -8,7 +8,8 @@
         xmlns:commonModels="clr-namespace:TaskManagerCourse.Common.Models;assembly=TaskManagerCourse.Common.Models"
         mc:Ignorable="d"
         Title="CreateOrUpdateUserWindow" 
-        Height="300" Width="350">
+        Height="300" Width="350"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                             ObjectType="{x:Type system:Enum}">

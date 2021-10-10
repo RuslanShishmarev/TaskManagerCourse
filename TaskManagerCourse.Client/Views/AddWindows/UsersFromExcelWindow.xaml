@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:commonModels="clr-namespace:TaskManagerCourse.Common.Models;assembly=TaskManagerCourse.Common.Models"
-        Title="UsersFromExcelWindow" Height="450" Width="800">
+        Title="UsersFromExcelWindow" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ObjectDataProvider x:Key="dataFromEnum" MethodName="GetValues"
                             ObjectType="{x:Type system:Enum}">
@@ -22,10 +23,10 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Button Content="Выбрать EXCEL" Command="{Binding GetUsersFromExcelCommand}" 
+        <Button Content="Select EXCEL file" Command="{Binding GetUsersFromExcelCommand}" 
                 Style="{StaticResource commonBtn}"/>
         <ListView Grid.Row="1" ItemsSource="{Binding UsersFromExcel}" 
-                  SelectedItem="{Binding SelectedUserFromExcelList}">
+                  SelectionChanged="ListView_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="FirstName" 
@@ -54,8 +55,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Grid.Row="2" Content="Загрузить" 
-                Command="{Binding AddMultipleUsersCommand}"
+        <Button Grid.Row="2" Content="Load users" 
+                Command="{Binding AddUsersFromExcelCommand}"
                 Style="{StaticResource commonBtn}"/>
     </Grid>
 </Window>

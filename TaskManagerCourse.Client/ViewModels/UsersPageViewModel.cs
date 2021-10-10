@@ -68,7 +68,7 @@ namespace TaskManagerCourse.Client.ViewModels
             }
         }
 
-        private List<UserModel> _selectedUsersFromExcel;
+        private List<UserModel> _selectedUsersFromExcel = new List<UserModel>();
 
         public List<UserModel> SelectedUsersFromExcel
         {
@@ -123,6 +123,8 @@ namespace TaskManagerCourse.Client.ViewModels
         {
             TypeActionWithUser = ClientAction.Create;
             SelectedUser = new UserModel();
+            var wnd = new CreateOrUpdateUserWindow();
+            _viewService.OpenWindow(wnd, this);
         }
         private void DeleteUser(object userIdObj)
         {
@@ -155,7 +157,8 @@ namespace TaskManagerCourse.Client.ViewModels
         private void GetUsersFromExcel()
         {
             string path = _viewService.GetFileFromDialog(_excelDialogFilterPattern);
-            UsersFromExcel = _excelService.GetAllUsersFromExcel(path);
+            if(string.IsNullOrEmpty(path) == false)
+                UsersFromExcel = _excelService.GetAllUsersFromExcel(path);
         }
 
         private void AddUsersFromExcel()
@@ -164,6 +167,7 @@ namespace TaskManagerCourse.Client.ViewModels
             {
                 var result = _usersRequestService.CreateMultipleUsers(_token, SelectedUsersFromExcel);
                 _viewService.ShowActionResult(result, "All users are created");
+                UpdatePage();
             }
         }
         private void UpdatePage()
